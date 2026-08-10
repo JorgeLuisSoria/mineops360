@@ -1,0 +1,31 @@
+name: Validate PR
+on:
+  pull_request:
+    branches: [develop, qa, main]
+    paths:
+      - 'force-app/**'
+      - 'sfdx-project.json'
+      - 'manifest/**'
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      # Node 22+ requerido: @salesforce/cli usa undici >=8.0.3, que llama a
+      # worker_threads.markAsUncloneable — una API nativa recién agregada en
+      # Node 22.10. Con Node 20 el CLI falla al instalarse/correr.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Salesforce CLI
+        run: npm install @salesforce/cli --global
+      - name: Auth CI org
+        run: |
+          echo "${{ secrets.SFDX_AUTH_URL_CI }}" > ./SFDX_AUTH_URL.txt
+          sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias CI
+      - name: Validate + run local tests
+        run: sf project deploy validate -o CI -d force-app -l RunLocalTests -w 30
+      - name: Clean up auth file
+        if: always()
+        run: rm -f ./SFDX_AUTH_URL.txt
