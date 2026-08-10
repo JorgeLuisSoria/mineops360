@@ -18,7 +18,7 @@ jobs:
           echo "${{ secrets.SFDX_AUTH_URL_PROD }}" > ./SFDX_AUTH_URL.txt
           sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias PROD
       - name: Deploy + run local tests
-        run: sf project deploy start -o PROD -l RunLocalTests -w 30
+        run: sf project deploy start -o PROD -d force-app -l RunLocalTests -w 30
       - name: Clean up auth file
         if: always()
         run: rm -f ./SFDX_AUTH_URL.txt

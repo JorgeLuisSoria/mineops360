@@ -21,7 +21,7 @@ jobs:
           echo "${{ secrets.SFDX_AUTH_URL_CI }}" > ./SFDX_AUTH_URL.txt
           sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias CI
       - name: Validate + run local tests
-        run: sf project deploy validate -o CI -l RunLocalTests -w 30
+        run: sf project deploy validate -o CI -d force-app -l RunLocalTests -w 30
       - name: Clean up auth file
         if: always()
         run: rm -f ./SFDX_AUTH_URL.txt
