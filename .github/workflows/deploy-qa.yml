@@ -1,0 +1,24 @@
+name: Deploy to QA
+on:
+  push:
+    branches: [qa]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Salesforce CLI
+        run: npm install @salesforce/cli --global
+      - name: Auth QA org
+        run: |
+          echo "${{ secrets.SFDX_AUTH_URL_QA }}" > ./SFDX_AUTH_URL.txt
+          sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias QA
+      - name: Deploy + run local tests
+        run: sf project deploy start -o QA -l RunLocalTests -w 30
+      - name: Clean up auth file
+        if: always()
+        run: rm -f ./SFDX_AUTH_URL.txt
