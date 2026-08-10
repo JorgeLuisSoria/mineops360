@@ -2,6 +2,10 @@ name: Validate PR
 on:
   pull_request:
     branches: [develop, qa, main]
+    paths:
+      - 'force-app/**'
+      - 'sfdx-project.json'
+      - 'manifest/**'
 jobs:
   validate:
     runs-on: ubuntu-latest

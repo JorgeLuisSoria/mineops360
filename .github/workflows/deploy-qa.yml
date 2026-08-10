@@ -2,6 +2,10 @@ name: Deploy to QA
 on:
   push:
     branches: [qa]
+    paths:
+      - 'force-app/**'
+      - 'sfdx-project.json'
+      - 'manifest/**'
 jobs:
   deploy:
     runs-on: ubuntu-latest
