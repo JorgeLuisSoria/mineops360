@@ -2,29 +2,54 @@ name: Validate PR
 on:
   pull_request:
     branches: [develop, qa, main]
-    paths:
-      - 'force-app/**'
-      - 'sfdx-project.json'
-      - 'manifest/**'
+
+# Sin filtro de `paths`: los dos jobs SIEMPRE corren para poder reportar su
+# status check (son requeridos por el ruleset protect-main-qa). Si el PR no
+# toca metadata de Salesforce, cada job se salta el trabajo pesado y termina
+# en verde en segundos.
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ¿Cambió metadata de Salesforce?
+        id: changes
+        run: |
+          if git diff --name-only \
+            "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            | grep -qE '^(force-app/|manifest/|sfdx-project\.json$)'; then
+            echo "sf=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "sf=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Sin cambios de metadata Salesforce — validate se salta."
+          fi
       # Node 22+ requerido: @salesforce/cli usa undici >=8.0.3, que llama a
       # worker_threads.markAsUncloneable — una API nativa recién agregada en
       # Node 22.10. Con Node 20 el CLI falla al instalarse/correr.
       - name: Set up Node.js
+        if: steps.changes.outputs.sf == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Cache npm
+        if: steps.changes.outputs.sf == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('.github/workflows/validate.yml') }}
       - name: Install Salesforce CLI
+        if: steps.changes.outputs.sf == 'true'
         run: npm install @salesforce/cli --global
       - name: Auth CI org
+        if: steps.changes.outputs.sf == 'true'
         run: |
           echo "${{ secrets.SFDX_AUTH_URL_CI }}" > ./SFDX_AUTH_URL.txt
           sf org login sfdx-url --sfdx-url-file ./SFDX_AUTH_URL.txt --alias CI
       - name: Validate + run local tests
+        if: steps.changes.outputs.sf == 'true'
         run: sf project deploy validate -o CI -d force-app -l RunLocalTests -w 30
       - name: Clean up auth file
         if: always()
@@ -34,26 +59,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ¿Cambió metadata de Salesforce?
+        id: changes
+        run: |
+          if git diff --name-only \
+            "${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }}" \
+            | grep -qE '^(force-app/|manifest/|sfdx-project\.json$)'; then
+            echo "sf=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "sf=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Sin cambios de metadata Salesforce — code-analyzer se salta."
+          fi
       - name: Set up Node.js
+        if: steps.changes.outputs.sf == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '22'
       # El motor PMD (Apex/Visualforce) corre sobre JVM: necesita Java 11+.
       - name: Set up Java
+        if: steps.changes.outputs.sf == 'true'
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+      - name: Cache npm
+        if: steps.changes.outputs.sf == 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('.github/workflows/validate.yml') }}
       - name: Install Salesforce CLI + Code Analyzer
+        if: steps.changes.outputs.sf == 'true'
         run: |
           npm install @salesforce/cli --global
           sf plugins install code-analyzer@latest
       # Falla el job si hay violaciones de severidad >= 3 (Moderate). Subir a 2
       # para ser más estricto, bajar a 4 para arrancar más permisivo.
       - name: Run Code Analyzer
+        if: steps.changes.outputs.sf == 'true'
         run: sf code-analyzer run --workspace force-app --view table --output-file code-analyzer-report.html --severity-threshold 3
       - name: Upload report
-        if: always()
+        if: steps.changes.outputs.sf == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: code-analyzer-report
