@@ -8,9 +8,10 @@ feature/xxx → PR a develop → PR a qa (deploy automático a org QA) → Relea
 
 ## Workflows (`.github/workflows/`)
 
-- **`validate.yml`** — corre en cada PR hacia `develop`, `qa` o `main`. Dos jobs paralelos:
+- **`validate.yml`** — corre en **cada** PR hacia `develop`, `qa` o `main` (sin filtro de `paths`). Dos jobs paralelos:
   - `validate`: `sf project deploy validate -o CI -d force-app -l RunLocalTests -w 30` contra la org CI.
   - `code-analyzer`: análisis estático de calidad (ver más abajo). No toca ninguna org.
+  - Cada job arranca con un paso "¿Cambió metadata de Salesforce?" (`git diff` contra la base del PR sobre `force-app/`, `manifest/`, `sfdx-project.json`). Si no cambió nada, los pasos pesados se saltan (`if: steps.changes.outputs.sf == 'true'`) y el job termina en verde en segundos. Así el check **siempre reporta** aunque el PR sea de solo docs — necesario porque son checks requeridos por el ruleset.
 - **`deploy-qa.yml`** — corre en cada push a `qa`. Ejecuta `sf project deploy start -o QA -d force-app -l RunLocalTests -w 30`.
 - **`deploy-prod.yml`** — corre solo con `release: published` (no con push a `main`). Ejecuta el mismo deploy contra PROD. El deploy a PROD es intencionalmente manual/gated: mergear a `main` no despliega nada por sí solo, hace falta crear el Release.
 
@@ -18,7 +19,9 @@ Los tres pasan `-d force-app` explícito porque `sf project deploy` ya no infier
 
 ## Filtro de paths
 
-`validate.yml` y `deploy-qa.yml` solo se disparan si el diff toca `force-app/**`, `sfdx-project.json` o `manifest/**`. Cambios de solo documentación (README, `architecture/`, etc.) no ejecutan el pipeline — evita fallos falsos por "no hay nada que desplegar".
+`deploy-qa.yml` solo se dispara si el push a `qa` toca `force-app/**`, `sfdx-project.json` o `manifest/**` — un merge de solo documentación a `qa` no lanza un deploy "sin nada que desplegar".
+
+`validate.yml` **no** usa filtro de `paths` (sus checks son requeridos por el ruleset y tienen que reportar siempre); el salto de trabajo por-PR lo resuelve a nivel de step. Ver "Workflows" arriba.
 
 ## Calidad de código (Salesforce Code Analyzer)
 
@@ -48,7 +51,7 @@ Proyecto de un solo dev: no se exige aprobación de PR (GitHub no permite aproba
 
 `develop` queda sin proteger a propósito (es la rama de integración). Si se suma otro colaborador: subir approvals a `1` y quitar el bypass de admin.
 
-**Gotcha de checks + `paths`**: `validate` / `code-analyzer` solo se encolan en PRs que tocan `force-app/**`, `sfdx-project.json` o `manifest/**`. En un PR de solo documentación esos checks nunca reportan y GitHub deja el PR en "Expected — waiting for status" (los cuenta como pendientes, **sí bloquea el merge**). Para esos PRs: usar el bypass de admin al mergear. Alternativa si molesta: quitar el filtro `paths` de `validate.yml` y hacer que cada job detecte "no hay metadata que tocar" y termine en verde.
+**Checks requeridos + PRs de solo docs** (resuelto): antes `validate` / `code-analyzer` tenían filtro de `paths`, así que en un PR de solo documentación nunca reportaban y GitHub bloqueaba el merge con "Expected — waiting for status". Ahora los jobs corren siempre y se saltan el trabajo pesado por step, con lo que reportan verde en segundos. El bypass de admin queda solo como escape para casos raros.
 
 ## Gotchas ya resueltos
 
