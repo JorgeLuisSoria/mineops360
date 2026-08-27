@@ -12,6 +12,8 @@
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
+    "scan": "sf code-analyzer run --workspace force-app --view detail",
+    "scan:ci": "sf code-analyzer run --workspace force-app --view table --output-file code-analyzer-report.html --severity-threshold 3",
     "prepare": "husky || true",
     "precommit": "lint-staged"
   },

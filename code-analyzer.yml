@@ -1,0 +1,28 @@
+# Configuración de Salesforce Code Analyzer v5 (sf code-analyzer run).
+# Docs: https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/config.html
+#
+# Con este archivo vacío de reglas, corren los motores por defecto (pmd, cpd,
+# eslint, regex, retire-js, flowtest) con sus rulesets estándar de Salesforce.
+# Ajustá acá según vaya creciendo el código.
+
+config_root: null
+log_folder: null
+
+# --- Ajuste de reglas -------------------------------------------------------
+# Cambiá severidad (1=Critical .. 5=Info) o desactivá reglas puntuales.
+rules: {}
+#  pmd:
+#    ApexDoc:
+#      severity: 5          # bajar ApexDoc a informativo
+#    OperationWithLimitsInLoop:
+#      severity: 1          # SOQL/DML en loop = crítico
+#  eslint:
+#    "no-console":
+#      severity: 4
+
+# --- Motores --------------------------------------------------------------
+# flowtest necesita Python 3.10+. En CI (ubuntu-latest) ya está; si molesta
+# en local, poné disable_engine: true acá.
+engines: {}
+#  flowtest:
+#    disable_engine: false

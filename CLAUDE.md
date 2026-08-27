@@ -1,6 +1,6 @@
 # MineOps360
 
-Plataforma Salesforce (Sales Cloud + Service Cloud + Experience Cloud) para gestión de alquiler/mantenimiento de equipos mineros, con integraciones a un servicio Java propio (Azure Blob, Twilio). Proyecto de portafolio compartido entre dos devs, construido en sprints simulados con Git.
+Plataforma Salesforce (Sales Cloud + Service Cloud + Experience Cloud) para gestión de alquiler/mantenimiento de equipos mineros, con integraciones a un servicio Java propio (Azure Blob, Twilio). Proyecto de portafolio de un solo dev, construido en sprints simulados con Git.
 
 Para contexto de negocio y decisiones de diseño, lee bajo demanda (no cargar todo de una):
 - `architecture/data-model.md` — objetos y relaciones
@@ -28,6 +28,8 @@ scripts/
 - Tests LWC: `npm run test:unit`
 - Lint: `npm run lint`
 - Formato: `npm run prettier`
+- Calidad estática (PMD/ESLint/Flow vía Salesforce Code Analyzer): `npm run scan`
+  (requiere el plugin: `sf plugins install code-analyzer`, y Java 11+ para el motor PMD)
 
 ## Flujo de ramas
 
@@ -42,5 +44,6 @@ Detalle completo, incluyendo por qué `validate.yml`/`deploy-qa.yml` usan filtro
 ## Convenciones
 
 - Metadata custom con sufijo `__c` en inglés (`Equipment__c`, `Rental_Contract__c`), pero labels y textos de UI en español.
-- Un PR por feature; no hacer push directo a `develop`/`qa`/`main` salvo fixes triviales ya acordados.
+- Un PR por feature (disciplina propia, sin aprobación de terceros: ver `architecture/ci-cd.md`). Push directo a `develop`/`qa`/`main` solo para fixes triviales.
+- Antes de mergear un PR, el check `validate` debe estar en verde.
 - No mergear a `main` sin que el deploy a QA (`deploy-qa.yml`) haya corrido en verde primero.
