@@ -39,14 +39,16 @@ El job necesita Java 17 (`actions/setup-java`) porque el motor PMD corre sobre J
 
 Proyecto de un solo dev: no se exige aprobación de PR (GitHub no permite aprobar el PR propio, así que "1 aprobación requerida" es inviable en solitario). El flujo de PR se mantiene por disciplina, no por bloqueo.
 
-Config recomendada en GitHub (Settings → Rules / Branch protection) para `main` y `qa`:
+**Activo**: repository ruleset `protect-main-qa` (Settings → Rules → Rulesets), enforcement `active`, sobre `refs/heads/main` y `refs/heads/qa`:
 
-- **Require a pull request before merging**: sí.
-- **Required approvals**: `0`.
-- **Require status checks to pass**: marcar los checks `validate` y `code-analyzer` (jobs de `validate.yml`).
-- **Do not allow bypassing the above settings**: desactivado, para poder auto-mergear como admin.
+- **Require a pull request before merging**, con **0 approvals**.
+- **Require status checks to pass**: `validate` y `code-analyzer` (jobs de `validate.yml`). Política no estricta (no exige que la rama esté al día antes de mergear).
+- **Block force pushes** (`non_fast_forward`) y **block deletion**.
+- **Bypass**: rol `Repository admin` en modo `always` — podés auto-mergear y, si hace falta, pushear directo sin quedar bloqueado.
 
-Si en el futuro se suma otro colaborador, subir *Required approvals* a `1` y activar el enforcement para admins.
+`develop` queda sin proteger a propósito (es la rama de integración). Si se suma otro colaborador: subir approvals a `1` y quitar el bypass de admin.
+
+**Gotcha de checks + `paths`**: `validate` / `code-analyzer` solo se encolan en PRs que tocan `force-app/**`, `sfdx-project.json` o `manifest/**`. En un PR de solo documentación esos checks nunca reportan y GitHub deja el PR en "Expected — waiting for status" (los cuenta como pendientes, **sí bloquea el merge**). Para esos PRs: usar el bypass de admin al mergear. Alternativa si molesta: quitar el filtro `paths` de `validate.yml` y hacer que cada job detecte "no hay metadata que tocar" y termine en verde.
 
 ## Gotchas ya resueltos
 
