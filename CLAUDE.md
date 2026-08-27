@@ -35,7 +35,7 @@ scripts/
 
 `feature/xxx` → PR a `develop` → PR a `qa` (push a `qa` dispara deploy automático a la org QA) → Release publicado desde `main` (dispara deploy a PROD; el merge a `main` por sí solo **no** despliega).
 
-Detalle completo, incluyendo por qué `validate.yml`/`deploy-qa.yml` usan filtro de `paths` (para que cambios de solo documentación no fallen el pipeline): `architecture/ci-cd.md`.
+Detalle completo (ruleset `protect-main-qa`, por qué `deploy-qa.yml` filtra por `paths` y `validate.yml` no, cómo cada job se salta el trabajo pesado en PRs de solo docs): `architecture/ci-cd.md`.
 
 ## Orgs y secrets
 
