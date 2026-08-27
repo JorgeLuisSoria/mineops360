@@ -29,3 +29,33 @@ jobs:
       - name: Clean up auth file
         if: always()
         run: rm -f ./SFDX_AUTH_URL.txt
+
+  code-analyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      # El motor PMD (Apex/Visualforce) corre sobre JVM: necesita Java 11+.
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Install Salesforce CLI + Code Analyzer
+        run: |
+          npm install @salesforce/cli --global
+          sf plugins install code-analyzer@latest
+      # Falla el job si hay violaciones de severidad >= 3 (Moderate). Subir a 2
+      # para ser más estricto, bajar a 4 para arrancar más permisivo.
+      - name: Run Code Analyzer
+        run: sf code-analyzer run --workspace force-app --view table --output-file code-analyzer-report.html --severity-threshold 3
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-analyzer-report
+          path: code-analyzer-report.html
+          if-no-files-found: ignore
