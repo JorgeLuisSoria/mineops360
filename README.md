@@ -1,58 +1,33 @@
-# Salesforce DX Project
+# MineOps360
 
-Salesforce DX is a development approach that brings source-driven development, team collaboration, and continuous integration to the Salesforce Platform. Instead of working directly in an org through a web browser, you work with metadata as source files in a local DX project, track changes in version control, and deploy through automated processes.
+Plataforma de gestión de alquiler y mantenimiento de equipos y maquinaria para proyectos mineros, construida sobre Salesforce (Sales Cloud + Service Cloud + Experience Cloud) con integraciones a un servicio propio en Java.
 
-This project template gets you started with the tools and structure you need to build Salesforce applications using source control, scratch orgs, and the Salesforce CLI.
+Proyecto de portafolio compartido, construido en sprints semanales simulados con GitHub, por Jorge Soria y Carlos Soria (experto de mantenimiento de maquinaria minera / agente de ventas de andamios Doka & Layher, en transición a Salesforce Developer).
 
-## Prerequisites
+## 📋 De qué trata
 
-Before you start, make sure you have:
+Una empresa minera alquila equipos y maquinaria (andamios, maquinaria pesada, equipos de izaje, vehículos, generadores) a distintas compañías mineras clientes. MineOps360 cubre todo el ciclo:
 
-- **Salesforce CLI** - Download from [developer.salesforce.com/tools/salesforcecli](https://developer.salesforce.com/tools/salesforcecli). See [Install Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) for details.
-- **VS Code with Salesforce Extension Pack** - See [Installation Instructions](https://developer.salesforce.com/docs/platform/sfvscode-extensions/guide/install.html) for details. Includes the Agentforce Vibes extension.
-- **A development org** - Sign up for a free Developer Edition org [here](https://developer.salesforce.com/signup).
-- **Dev Hub enabled** (optional, required to create scratch orgs) - You can enable Dev Hub in your development org under Setup > Dev Hub.  See [Provide Developers Access to Salesforce DX Tools](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_dx_tools.htm).
+- **Venta y alquiler** del equipo (Sales Cloud): oportunidades, contratos de alquiler, aprobaciones de descuento.
+- **Mantenimiento y soporte** (Service Cloud): reporte de fallas, asignación a técnicos por especialidad, SLA de respuesta, base de conocimiento, consola de atención con dial.
+- **Autogestión del cliente** (Experience Cloud): un portal donde cada empresa minera ve solo sus propios equipos y contratos, reporta incidencias y descarga certificados de inspección.
+- **Integraciones**: los certificados de inspección se suben/descargan desde un servicio propio en Java conectado a Azure Blob Storage, y las notificaciones críticas de servicio se envían por SMS vía Twilio.
 
-## Project Structure
+El proyecto está pensado para reflejar el día a día real de un equipo de implementación Salesforce — modelado de datos, seguridad, automatización declarativa, Apex, integraciones — construido en sprints semanales con Pull Requests, revisiones cruzadas, y un pipeline de CI/CD real sobre 3 orgs (CI, QA, PROD).
 
-Your DX project follows this structure:
+## 🏗️ Arquitectura
 
-- **`force-app/main/default/`** - Your metadata source files live in this default package directory. You can configure additional package directories in the `sfdx-project.json` file.
-- **`config/`** - Scratch org definitions and project settings
-- **`scripts/`** - Automation scripts for common tasks
-- **`sfdx-project.json`** - Project manifest that defines package directories, namespace, API version, and other project-level settings
+La documentación técnica profunda vive en [`architecture/`](architecture/) para no inflar este README:
 
-See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm).
+- [Modelo de datos](architecture/data-model.md) — objetos, relaciones y diagrama ER
+- [Modelo de seguridad](architecture/security-model.md) — roles, OWD, sharing
+- [Alcance por nube](architecture/cloud-scope.md) — Sales / Service / Experience Cloud y stack tecnológico
+- [Integraciones](architecture/integrations.md) — servicio Java, Azure Blob, Twilio
+- [Pipeline CI/CD](architecture/ci-cd.md) — workflows, orgs, branch protection
 
-## Get Started
+El plan de trabajo semana a semana está en [`ROADMAP.md`](ROADMAP.md).
 
-Ready to start developing? The [Get Started with Salesforce DX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_get_started_dx.htm) guide walks you through your first project, from creating a scratch org to creating a simple Apex class or LWC to deploying your code to a sandbox.
+## 👥 Roles del equipo
 
-## Common Salesforce CLI Commands
-
-Here are common CLI commands that you'll use the most:
-
-- `sf org login web`: Authorize an org
-- `sf org open`: Open your org in a browser
-- `sf org create scratch`: Create a scratch org
-- `sf project deploy start`: Deploy metadata to your org
-- `sf project retrieve start`: Retrieve metadata from your org
-- `sf template generate <artifact>`: Scaffold new components, such as Apex classes and triggers, LWC components, Lightning apps, and more
-- `sf apex <command>`: Run Apex tests, run anonymous Apex blocks, and view logs
-- `sf data <command>`: Work with test data
-- `sf alias <command>`: Manage org aliases
-- `sf config <command>`: Configure CLI settings
-
-## Use Agentforce Vibes to Build Lightning Apps
-
-Transform your ideas into custom Lightning apps that extend CRM workflows directly in Lightning Experience. Through natural conversations with Agentforce Vibes, implement custom objects and fields, complex business logic, and dynamic UI components. See [Build a Lightning App Using Agentforce Vibes](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/lexapp-overview.html).
-
-## Additional Resources
-
-- [Agentforce Vibes Developer Guide](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/einstein-overview.html)
-- [Salesforce CLI Installation Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/)
-- [Salesforce CLI Plugin Development Guide](https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/conceptual-overview.html)
-- [Salesforce VS Code Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-
+- **Tech Lead / Integraciones:** revisa y aprueba PRs hacia `qa`/`main`, crea los Releases, construye la capa de Apex/integraciones.
+- **Desarrollador Junior:** construye cada feature declarativa primero (modelo de datos, automatización, seguridad), abre PRs contra `develop`.
