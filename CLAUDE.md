@@ -3,11 +3,13 @@
 Plataforma Salesforce (Sales Cloud + Service Cloud + Experience Cloud) para gestión de alquiler/mantenimiento de equipos mineros, con integraciones a un servicio Java propio (Azure Blob, Twilio). Proyecto de portafolio de un solo dev, construido en sprints simulados con Git.
 
 Para contexto de negocio y decisiones de diseño, lee bajo demanda (no cargar todo de una):
+
 - `architecture/data-model.md` — objetos y relaciones
 - `architecture/security-model.md` — roles, OWD, sharing
 - `architecture/cloud-scope.md` — alcance por nube y stack
 - `architecture/integrations.md` — servicio Java, Azure Blob, Twilio
 - `architecture/ci-cd.md` — pipeline, orgs, gotchas ya resueltos
+- `architecture/experience-cloud.md` — portal: qué se versiona y qué se configura a mano
 - `ROADMAP.md` — plan semana a semana, quién construye qué
 
 ## Estructura del repo

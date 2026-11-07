@@ -1,0 +1,40 @@
+<template>
+  <lightning-card title={title} icon-name="custom:custom19">
+    <div slot="actions">
+      <lightning-combobox
+        name="status"
+        label="Estado"
+        variant="label-hidden"
+        value={status}
+        options={statusOptions}
+        onchange={handleStatusChange}
+        data-id="status-filter"
+      ></lightning-combobox>
+    </div>
+    <div class="slds-p-horizontal_small">
+      <template lwc:if={isLoading}>
+        <lightning-spinner
+          alternative-text="Cargando"
+          size="small"
+        ></lightning-spinner>
+      </template>
+      <template lwc:if={error}>
+        <p class="slds-text-color_error" data-id="error">{error}</p>
+      </template>
+      <template lwc:if={hasRows}>
+        <lightning-datatable
+          key-field="Id"
+          data={rows}
+          columns={columns}
+          hide-checkbox-column
+          onrowaction={handleRowAction}
+        ></lightning-datatable>
+      </template>
+      <template lwc:if={isEmpty}>
+        <p class="slds-text-color_weak" data-id="empty">
+          No hay equipos para este filtro.
+        </p>
+      </template>
+    </div>
+  </lightning-card>
+</template>
