@@ -1,0 +1,43 @@
+<template>
+  <lightning-card title={title} icon-name="standard:task2">
+    <div class="slds-p-horizontal_small">
+      <template lwc:if={error}>
+        <p class="slds-text-color_error" data-id="error">{error}</p>
+      </template>
+      <template lwc:if={hasInspections}>
+        <ul class="slds-has-dividers_bottom-space">
+          <template for:each={inspections} for:item="ins">
+            <li key={ins.id} class="slds-item" data-id="inspection">
+              <div class="slds-grid slds-grid_align-spread">
+                <div>
+                  <p class="slds-text-title_bold">{ins.name}</p>
+                  <lightning-formatted-date-time
+                    value={ins.date}
+                    time-zone="UTC"
+                  ></lightning-formatted-date-time>
+                </div>
+                <div class="slds-text-align_right">
+                  <span class={ins.badgeClass}>{ins.result}</span>
+                  <template lwc:if={ins.certificateUrl}>
+                    <p>
+                      <lightning-formatted-url
+                        value={ins.certificateUrl}
+                        label="Ver certificado"
+                        target="_blank"
+                      ></lightning-formatted-url>
+                    </p>
+                  </template>
+                </div>
+              </div>
+            </li>
+          </template>
+        </ul>
+      </template>
+      <template lwc:else>
+        <p class="slds-text-color_weak" data-id="empty">
+          Este equipo aún no tiene inspecciones.
+        </p>
+      </template>
+    </div>
+  </lightning-card>
+</template>
