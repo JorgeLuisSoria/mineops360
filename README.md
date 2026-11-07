@@ -24,6 +24,7 @@ La documentación técnica profunda vive en [`architecture/`](architecture/) par
 - [Alcance por nube](architecture/cloud-scope.md) — Sales / Service / Experience Cloud y stack tecnológico
 - [Integraciones](architecture/integrations.md) — servicio Java, Azure Blob, Twilio
 - [Pipeline CI/CD](architecture/ci-cd.md) — workflows, orgs, branch protection
+- [Experience Cloud](architecture/experience-cloud.md) — portal del cliente: qué va en el repo y qué se configura a mano
 
 El plan de trabajo semana a semana está en [`ROADMAP.md`](ROADMAP.md).
 
