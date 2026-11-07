@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Days_Remaining__c</fullName>
+    <description
+  >Días que faltan para la fecha de fin. 0 si ya venció; vacío si no hay fecha de fin.</description>
+    <formula
+  >IF(ISBLANK(End_Date__c), NULL, MAX(End_Date__c - TODAY(), 0))</formula>
+    <formulaTreatBlanksAs>BlankAsBlank</formulaTreatBlanksAs>
+    <label>Días restantes</label>
+    <precision>18</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
