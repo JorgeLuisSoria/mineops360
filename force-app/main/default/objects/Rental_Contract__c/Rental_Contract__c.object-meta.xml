@@ -17,11 +17,11 @@
         <displayFormat>CONT-{0000}</displayFormat>
         <label>N° de contrato</label>
         <trackHistory>false</trackHistory>
+        <startingNumber>1</startingNumber>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Contratos de alquiler</pluralLabel>
     <searchLayouts />
     <sharingModel>Private</sharingModel>
-    <startingNumber>1</startingNumber>
     <visibility>Public</visibility>
 </CustomObject>

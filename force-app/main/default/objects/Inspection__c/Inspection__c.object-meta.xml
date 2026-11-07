@@ -16,11 +16,11 @@
     <nameField>
         <displayFormat>INS-{0000}</displayFormat>
         <label>N° de inspección</label>
+        <startingNumber>1</startingNumber>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Inspecciones</pluralLabel>
     <searchLayouts />
     <sharingModel>ControlledByParent</sharingModel>
-    <startingNumber>1</startingNumber>
     <visibility>Public</visibility>
 </CustomObject>

@@ -16,11 +16,11 @@
     <nameField>
         <displayFormat>LIN-{0000}</displayFormat>
         <label>N° de línea</label>
+        <startingNumber>1</startingNumber>
         <type>AutoNumber</type>
     </nameField>
     <pluralLabel>Líneas de contrato</pluralLabel>
     <searchLayouts />
     <sharingModel>ControlledByParent</sharingModel>
-    <startingNumber>1</startingNumber>
     <visibility>Public</visibility>
 </CustomObject>
